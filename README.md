@@ -31,4 +31,12 @@ git rebase -i HEAD~2
 
 # Take file from another branch
 git checkout <branch> -- file
+
+# Change author and committer
+git filter-branch --env-filter 'if [ "$GIT_AUTHOR_EMAIL" = "incorrect@email" ]; then
+     GIT_AUTHOR_EMAIL=correct@email;
+     GIT_AUTHOR_NAME="Correct Name";
+     GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL;
+     GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"; fi' -- --all
 ```
+ 
