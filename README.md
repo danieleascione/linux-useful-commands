@@ -28,6 +28,8 @@ remove_branches_but master
 git rebase -i <other branch>
 # Squash last 2 commits in current branch
 git rebase -i HEAD~2
+# Squash when merging
+git merge --squash <other branch>
 
 # Take file from another branch
 git checkout <branch> -- file
