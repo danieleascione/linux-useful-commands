@@ -42,3 +42,58 @@ git filter-branch --env-filter 'if [ "$GIT_AUTHOR_EMAIL" = "incorrect@email" ]; 
      GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"; fi' -- --all
 ```
  
+## Ip Tables
+
+### Show rules
+```bash
+# Show all rules in verbose mode
+sudo iptables -L -v
+
+# Show all lines with line number
+sudo iptables -L --line-numbers
+
+# Show routing table
+route -n
+```
+
+### Create rule
+```bash
+# Template for appending a new rule to the chain:
+# <chain> can be: INPUT, FORWARD, OUTPUT
+# <target> can be: ACCEPT, DROP, RETURN
+sudo iptables -A <chain> -i <interface> -p <protocol (tcp/udp) > -s <source> -dport <port no.>  -j <target>
+
+sudo iptables -A <chain> -i <interface> -p <protocol (tcp/udp) > -s <source>  -j <target> -m iprange --src-range 192.168.1.100-192.168.1.200
+```
+
+### Delete rules
+```bash
+# Flush all chains
+sudo iptables -F 
+
+# Flush rules for a given chain
+sudo iptables -F <chain>
+
+# Delete line <n> in chain <chain>
+sudo iptables -D <chain> <n>
+```
+
+### Useful examples
+```bash
+# Allow LAN nodes with private IPs to communicate with external public networks
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 
+
+# Forward all traffic from tun0 to wlan0 in state RELATED, ESTABILISHED
+sudo iptables -A FORWARD -i tun0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Forward all traffic from tun0 to wlan0
+sudo iptables -A FORWARD -i wlan0 -o tun0 -j ACCEPT
+
+# Save current rules
+sudo sh -c "iptables-save > /etc/iptables/rules.v4"
+
+# To make those ip tables persistent, install iptables-persistent...
+sudo apt-get install iptables-persistent
+
+# ...or modify /etc/rc.local accordingly
+```
