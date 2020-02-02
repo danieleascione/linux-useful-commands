@@ -13,17 +13,16 @@ readonly INPUT_ERROR=2
 #
 generate_key() 
 {
-  if [ -z "$1" ]
+  if [ -z "$1" ] || [ -z "$2" ]
   then
-    echo "You must specify an email as first argument"
-    return INPUT_ERROR
+    echo -e "
+      You must specify an email as first argument and the name of the file as second argument.
+      generate_key [mail_address] [key_name]
+      Example: generate_key hello@mail.com key1
+      " 
+    return 0
   fi
 
-  if [ -z "$2" ]
-  then
-    echo "You must specify the file name as second argument"
-    return INPUT_ERROR
-  fi
   
   # Generate key with provided name
   ssh-keygen -t rsa -b 4096 -C $1 -f ~/.ssh/$2
@@ -31,6 +30,9 @@ generate_key()
   # Add key to ssh-agent
   eval "$(ssh-agent -s)"
   ssh-add ~/.ssh/$2
+
+  echo -e "Generated key: $HOME/.ssh/$2: \n"
+  cat ~/.ssh/$2
 }
 
 #
